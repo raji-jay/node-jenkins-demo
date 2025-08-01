@@ -1,9 +1,14 @@
-FROM node:18-alpine
+FROM jenkins/jenkins:lts
 
-WORKDIR /app
-COPY app/ .
+USER root
 
-RUN npm install
-EXPOSE 3000
+# Install Node.js (LTS) and npm
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+  && apt-get install -y nodejs \
+  && npm install -g npm
 
-CMD ["npm", "start"]
+# Install Docker CLI inside Jenkins (optional but useful)
+RUN apt-get update && apt-get install -y docker.io
+
+# Switch back to Jenkins user
+USER jenkins
